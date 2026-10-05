@@ -1,0 +1,17 @@
+CRISTIAN BUILES
+Desarrollador de software
+
+PERFIL
+Desarrollador apasionado por crear soluciones digitales claras y funcionales.
+
+EXPERIENCIA
+Desarrollo de aplicaciones web, APIs y herramientas administrativas.
+
+HABILIDADES
+Java · PHP · JavaScript · React · Next.js · SQL · Git
+
+EDUCACIÓN
+Ingeniería de software — formación continua
+
+CONTACTO
+cristian.builes@example.com
