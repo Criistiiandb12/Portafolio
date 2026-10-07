@@ -26,7 +26,7 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
 }
 
 const projects = [
-  { slug: "img-convert", title: "Convertly", type: "Web · Conversor de imágenes", desc: "Aplicación web para convertir imágenes entre distintos formatos de forma sencilla y rápida.", tags: ["Web", "Imágenes", "Vercel"], color: "lavender", repo: "https://img-convert-tau.vercel.app/", image: "/projects/conver-img.png" },
+  { slug: "img-convert", title: "Convertly", type: "Web · Conversor de imágenes", desc: "Aplicación web para convertir imágenes entre distintos formatos de forma sencilla y rápida.", tags: ["SvelteKit", "TypeScript", "Vercel", "Rust", "WebAssembly (WASM)", "Vite", "GitHub"], color: "lavender", repo: "https://img-convert-tau.vercel.app/", image: "/projects/conver-img.png" },
 ];
 
 type GithubRepo = { name: string; html_url: string; description: string | null; language: string | null; stargazers_count: number; updated_at: string };
