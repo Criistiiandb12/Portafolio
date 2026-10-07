@@ -109,14 +109,21 @@ export default function Home() {
   useEffect(() => {
     const savedSession = window.localStorage.getItem("portfolio-session");
     const savedTheme = window.localStorage.getItem("portfolio-theme");
+    if (window.location.hash) {
+      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      window.scrollTo(0, 0);
+    }
     setLoggedIn(savedSession === "active");
     setDarkMode(savedTheme !== "light");
     setSessionReady(true);
   }, []);
 
   useEffect(() => {
-    if (!sessionReady || !loggedIn || window.location.hash !== "#proyectos") return;
-    requestAnimationFrame(() => document.getElementById("proyectos")?.scrollIntoView({ behavior: "smooth" }));
+    if (!sessionReady || !loggedIn || new URLSearchParams(window.location.search).get("section") !== "proyectos") return;
+    requestAnimationFrame(() => {
+      document.getElementById("proyectos")?.scrollIntoView({ behavior: "smooth" });
+      window.history.replaceState(null, "", "/");
+    });
   }, [sessionReady, loggedIn]);
 
   function toggleTheme() {
