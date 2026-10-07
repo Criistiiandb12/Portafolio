@@ -1146,6 +1146,10 @@ nav a:first-child:before {
     min-width: 0;
 }
 
+.skill-group:last-child {
+    grid-column: 1 / -1;
+}
+
 .skill-group h4 {
     font-size: 12px;
     font-weight: 500;

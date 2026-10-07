@@ -82,9 +82,9 @@ const skillGroups = [
   { title: "Frontend", skills: [skill("React", "react.png"), skill("Next.js", "nextjs.png"), skill("TypeScript", "typescript.png"), skill("Bootstrap", "bootstrap.png"), skill("Tailwind", "tailwind.png"), skill("Vue", "vue.png"), skill("Vite", "vite.png")] },
   { title: "Backend", skills: [skill("Node", "nodejs.png"), skill("Express", "express.png"), skill("Python", "python.png"), skill("Java", "java.png"), skill("PHP", "php.png"), skill("Go", "go.png"), skill("NestJS", "nestJS.png")] },
   { title: "Databases", skills: [skill("MySQL", "mysql.png"), skill("MongoDB", "mongoDB.png"), skill("AWS", "aws.png")] },
-  { title: "Herramientas", skills: [skill("Figma"), skill("Vercel"), skill("Git", "git.png"), skill("Linux", "Linux.png"), skill("GitHub", "GitHub.png"), skill("VS Code"), skill("JWT"), skill("Postman", "postman.png"), skill("Docker", "Docker.png")] },
+  { title: "Herramientas", skills: [skill("Figma", "figma.png"), skill("Vercel", "vercel.png"), skill("Git", "git.png"), skill("Linux", "Linux.png"), skill("GitHub", "GitHub.png"), skill("VS Code", "vscode.png"), skill("JWT", "jwt.png"), skill("Postman", "postman.png"), skill("Docker", "Docker.png"), skill("Office", "office.png")] },
   { title: "IA", skills: [skill("Gemini", "gemini.png"), skill("Copilot", "Copilot.webp"), skill("ChatGPT", "ChatGPT.png"), skill("Codex", "codex.png"), skill("Claude", "claude.png"), skill("Claude Code", "claude_code.webp"), skill("OpenCode"), skill("Cursor", "cursor.png")] },
-  { title: "Habilidades blandas", skills: [skill("Atención al detalle"), skill("Dedicación"), skill("Trabajo en equipo"), skill("Pensamiento analítico")] },
+  { title: "Habilidades blandas", skills: [skill("Atención al detalle"), skill("Dedicación"), skill("Trabajo en equipo"), skill("Pensamiento analítico"), skill("Comunicación asertiva"), skill("Adaptabilidad"), skill("Dedicación de tiempo"), skill("Innovación y creatividad")] },
 ];
 
 const navItems: { label: string; id: string; icon: IconName }[] = [
