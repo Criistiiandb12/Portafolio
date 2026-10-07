@@ -26,10 +26,7 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
 }
 
 const projects = [
-  { slug: "nomina-rrhh", title: "Nómina & RRHH", type: "Java · Spring Boot", desc: "API para gestionar empleados, contratos y procesos de nómina con arquitectura limpia.", tags: ["Java", "Spring Boot", "PostgreSQL"], color: "lavender", repo: "#" },
-  { slug: "panel-cobranzas", title: "Panel de cobranzas", type: "PHP · Laravel", desc: "Herramienta administrativa para visualizar estados, asignar gestiones y generar reportes.", tags: ["PHP", "Laravel", "MySQL"], color: "mint", repo: "#" },
-  { slug: "portafolio-personal", title: "Portafolio personal", type: "Next.js · TypeScript", desc: "Este sitio: una experiencia clara para presentar mi recorrido, proyectos y aprendizajes.", tags: ["Next.js", "TypeScript", "Vercel"], color: "peach", repo: "#" },
-  { slug: "img-convert", title: "Img Convert", type: "Web · Conversor de imágenes", desc: "Aplicación web para convertir imágenes entre distintos formatos de forma sencilla y rápida.", tags: ["Web", "Imágenes", "Vercel"], color: "lavender", repo: "https://img-convert-tau.vercel.app/" },
+  { slug: "img-convert", title: "Convertly", type: "Web · Conversor de imágenes", desc: "Aplicación web para convertir imágenes entre distintos formatos de forma sencilla y rápida.", tags: ["Web", "Imágenes", "Vercel"], color: "lavender", repo: "https://img-convert-tau.vercel.app/", image: "/projects/conver-img.png" },
 ];
 
 type GithubRepo = { name: string; html_url: string; description: string | null; language: string | null; stargazers_count: number; updated_at: string };
@@ -100,6 +97,7 @@ const navItems: { label: string; id: string; icon: IconName }[] = [
 
 export default function Home() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [cvOpen, setCvOpen] = useState(false);
   const [activeProject, setActiveProject] = useState("Todos");
@@ -107,6 +105,27 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState("inicio");
   const [githubData, setGithubData] = useState<GithubData | null>(null);
   const [githubLoading, setGithubLoading] = useState(false);
+
+  useEffect(() => {
+    const savedSession = window.localStorage.getItem("portfolio-session");
+    const savedTheme = window.localStorage.getItem("portfolio-theme");
+    setLoggedIn(savedSession === "active");
+    setDarkMode(savedTheme !== "light");
+    setSessionReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!sessionReady || !loggedIn || window.location.hash !== "#proyectos") return;
+    requestAnimationFrame(() => document.getElementById("proyectos")?.scrollIntoView({ behavior: "smooth" }));
+  }, [sessionReady, loggedIn]);
+
+  function toggleTheme() {
+    setDarkMode((current) => {
+      const next = !current;
+      window.localStorage.setItem("portfolio-theme", next ? "dark" : "light");
+      return next;
+    });
+  }
 
   useEffect(() => {
     const sections = navItems.map((item) => document.getElementById(item.id)).filter(Boolean) as HTMLElement[];
@@ -128,17 +147,18 @@ export default function Home() {
       .finally(() => setGithubLoading(false));
   }, [loggedIn, githubData]);
 
-  function handleLogin(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setLoggedIn(true); }
+  function handleLogin(event: FormEvent<HTMLFormElement>) { event.preventDefault(); window.localStorage.setItem("portfolio-session", "active"); setLoggedIn(true); }
 
-  if (!loggedIn) return <main className={`login-page ${darkMode ? "theme-dark" : ""}`}><button className="theme-toggle login-theme-toggle" onClick={() => setDarkMode(!darkMode)} aria-label="Cambiar tema"> <Icon name={darkMode ? "sun" : "moon"} size={16} /> {darkMode ? "Claro" : "Oscuro"}</button><div className="login-decoration decoration-one" /><div className="login-decoration decoration-two" /><section className="login-card"><div className="login-mark">CB<span>.</span></div><p className="eyebrow">PORTAFOLIO PERSONAL</p><h1>Bienvenido a mi<br /><em>espacio digital.</em></h1><p className="login-copy">Un lugar para conocer mi recorrido, mis proyectos y las ideas que estoy construyendo.</p><form onSubmit={handleLogin} className="login-form"><label>Usuario<input required name="username" placeholder="Tu usuario" /></label><label>Contraseña<input required name="password" type="password" placeholder="Cualquier contraseña" /></label><button className="primary-button login-button" type="submit">Entrar al portafolio <Icon name="arrow" /></button></form><p className="demo-note"><Icon name="lock" size={14} /> Acceso demo · puedes usar cualquier usuario</p></section><p className="login-footer">Diseñado y desarrollado por <strong>Cristian Builes ★</strong></p></main>;
+  if (!sessionReady) return null;
+  if (!loggedIn) return <main className={`login-page ${darkMode ? "theme-dark" : ""}`}><button className="theme-toggle login-theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema"> <Icon name={darkMode ? "sun" : "moon"} size={16} /> {darkMode ? "Claro" : "Oscuro"}</button><div className="login-decoration decoration-one" /><div className="login-decoration decoration-two" /><section className="login-card"><div className="login-mark">CB<span>.</span></div><p className="eyebrow">PORTAFOLIO PERSONAL</p><h1>Bienvenido a mi<br /><em>espacio digital.</em></h1><p className="login-copy">Un lugar para conocer mi recorrido, mis proyectos y las ideas que estoy construyendo.</p><form onSubmit={handleLogin} className="login-form"><label>Usuario<input required name="username" placeholder="Tu usuario" /></label><label>Contraseña<input required name="password" type="password" placeholder="Cualquier contraseña" /></label><button className="primary-button login-button" type="submit">Entrar al portafolio <Icon name="arrow" /></button></form><p className="demo-note"><Icon name="lock" size={14} /> Acceso demo · puedes usar cualquier usuario</p></section><p className="login-footer">Diseñado y desarrollado por <strong>Cristian Builes ★</strong></p></main>;
 
   const filters = ["Todos", "Java", "PHP", "Next.js"];
   const filteredProjects = activeProject === "Todos" ? projects : projects.filter((project) => project.tags.includes(activeProject));
   return <div className={`site-shell ${darkMode ? "theme-dark" : ""} ${sidebarOpen ? "sidebar-visible" : "sidebar-hidden"}`}>
-    <header className="topbar"><button className="brand" onClick={() => document.getElementById("inicio")?.scrollIntoView({ behavior: "smooth" })} aria-label="Ir al inicio"><span>CB</span><i>.</i></button><div className="topbar-right"><span className="availability"><b /> Disponible para oportunidades</span><button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} aria-label="Cambiar tema"><Icon name={darkMode ? "sun" : "moon"} size={15} /> {darkMode ? "Claro" : "Oscuro"}</button><button className="logout-button" onClick={() => setLoggedIn(false)}>Salir</button></div></header>
+    <header className="topbar"><button className="brand" onClick={() => document.getElementById("inicio")?.scrollIntoView({ behavior: "smooth" })} aria-label="Ir al inicio"><span>CB</span><i>.</i></button><div className="topbar-right"><span className="availability"><b /> Disponible para oportunidades</span><button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema"><Icon name={darkMode ? "sun" : "moon"} size={15} /> {darkMode ? "Claro" : "Oscuro"}</button><button className="logout-button" onClick={() => { window.localStorage.removeItem("portfolio-session"); setLoggedIn(false); }}>Salir</button></div></header>
     <aside className="sidebar"><div className="sidebar-inner"><div className="profile-mini"><div className="avatar"><Image src="/me/profile.png" alt="Cristian Builes" width={38} height={38} className="avatar-img" /></div><div><strong>Cristian Builes ★</strong><span>Desarrollador de software</span></div></div><p className="nav-label">NAVEGACIÓN</p><nav>{navItems.map((item) => <a className={activeSection === item.id ? "nav-active" : ""} href={`#${item.id}`} key={item.id}><Icon name={item.icon} /><span>{item.label}</span>{activeSection === item.id && <b className="active-dot" />}</a>)}</nav><div className="sidebar-bottom"><div className="side-line" /><p>Construyendo soluciones<br />con intención y código.</p><a className="side-github" href="https://github.com/Criistiiandb12" target="_blank" rel="noreferrer"><Icon name="github" size={16} /> @Criistiiandb12</a></div></div></aside>
     <main className="main-content"><button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Mostrar u ocultar menú"><Icon name={sidebarOpen ? "close" : "menu"} size={19} /></button>
-      <section id="inicio" className="hero-section section-pad"><div className="hero-copy"><p className="eyebrow">HOLA, SOY CRISTIAN DANIEL BUILES VERONA<span className="wave">✦</span></p><h1>Mi talento y <em>Trabajo,</em> enfocados en <em>crecer.</em></h1><p className="hero-description">Soy un programador de software enfocado en construir productos digitales útiles, sencillos y bien pensados.</p><div className="hero-actions"><a href="#proyectos" className="primary-button">Ver mis proyectos <Icon name="arrow" /></a><a href="#sobre-mi" className="text-link">Conóceme mejor <Icon name="arrow" size={16} /></a></div></div><div className="hero-art"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="hero-card"><Image className="hero-profile-image" src="/me/profile.png" alt="Cristian Builes" width={72} height={72} /><strong>Transformar<br /><em>complejidad</em><br />en claridad.</strong><div className="card-code"><span>const</span> passion = <b>true</b>;</div></div><span className="float-dot dot-one" /><span className="float-dot dot-two" /><span className="float-plus">＋</span></div><div className="scroll-cue"><span /> Desplázate para explorar</div></section>
+      <section id="inicio" className="hero-section section-pad"><div className="hero-copy"><p className="eyebrow">HOLA, SOY CRISTIAN DANIEL BUILES VERONA<span className="wave">✦</span></p><h1>Mi talento y <em>Trabajo,</em> enfocados en <em>crecer.</em></h1><p className="hero-description">Soy un programador de software enfocado en construir productos digitales útiles, sencillos y bien pensados.</p><div className="hero-actions"><a href="#proyectos" className="primary-button">Ver mis proyectos <Icon name="arrow" /></a><a href="#sobre-mi" className="text-link">Conóceme mejor <Icon name="arrow" size={16} /></a></div></div><div className="hero-art"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="hero-card"><Image className="hero-profile-image" src="/me/profile.png" alt="Cristian Builes" width={142} height={142} quality={100} sizes="142px" /><strong>Transformar<br /><em>complejidad</em><br />en claridad.</strong><div className="card-code"><span>const</span> passion = <b>true</b>;</div></div><span className="float-dot dot-one" /><span className="float-dot dot-two" /><span className="float-plus">＋</span></div><div className="scroll-cue"><span /> Desplázate para explorar</div></section>
       <section id="sobre-mi" className="about-section section-pad section-divider"><div className="section-heading"><p className="eyebrow">01 / SOBRE MÍ</p><h2>Un poco sobre<br /><em>mi camino.</em></h2></div><div className="about-grid"><div className="about-intro"><p>Inicié mi vida universitaria en la <strong>Universidad de Córdoba</strong>, donde estudié entre 2019 y 2025. Me gradué gracias a un proyecto investigativo que analizaba el impacto de una herramienta de gestión de proyectos en los docentes, tomando como caso de estudio <strong>Trello</strong>. Este trabajo me permitió socializar mis hallazgos en un <strong>simposio internacional</strong>, lo que enriqueció mi experiencia académica y profesional.</p><br />
       <p>Antes de culminar mis estudios, tuve la necesidad de ingresar al mundo laboral. En mi primer empleo se me pidió aprovechar mis conocimientos en programación, adquiridos en la universidad, donde aprendí <strong>JavaScript, HTML, CSS, SQL, MongoDB y Vue.js</strong>. Allí inicié el desarrollo de un aplicativo de gestión empresarial, considerando las regulaciones comerciales de Colombia y el cálculo de impuestos nacionales, departamentales y municipales. Durante este proceso amplié mis habilidades con <strong>Express, React, Tailwind, JWT y NestJS.</strong><br />
       </p>
@@ -156,7 +176,7 @@ export default function Home() {
       <p className="section-side-copy">Una selección de proyectos personales y profesionales. Cada uno es una oportunidad para aprender algo nuevo.</p></div>
       <div className="filter-row">{filters.map((filter) => <button key={filter} className={activeProject === filter ? "filter-active" : ""} onClick={() => setActiveProject(filter)}>{filter}</button>)}</div>
       <div className="projects-grid">{filteredProjects.map((project, index) =>   <a className="project-card" href={`/proyectos/${project.slug}`} key={project.title}>
-        <div className={`project-visual ${project.color}`}><span>{String(index + 1).padStart(2, "0")}</span><Icon name="code" size={46} /></div >
+        <div className={`project-visual ${project.color}`}><span>{String(index + 1).padStart(2, "0")}</span>{project.image ? <Image className="project-preview-image" src={project.image} alt={`Captura de ${project.title}`} width={1098} height={593} sizes="(max-width: 680px) 100vw, 33vw" /> : <Icon name="code" size={46} />}</div >
         <div className="project-body"><div className="project-meta"><span>{project.type}</span><span className="project-card-arrow"><Icon name="arrow" size={16} /></span></div>
         <h3>{project.title}</h3><p>{project.desc}</p><div className="tag-row">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><span className="project-detail-link">Ver detalle <Icon name="arrow" size={15} /></span></div></a>)}</div></section>
 
